@@ -1,0 +1,14 @@
+Week 0:
+ + Decide on a project
+ + Create an outline of what has to be done
+ + Create a skeleton of the program
+
+Week 1:
+ - Words moving across the screen
+ - Working exit
+ - Basic overlay
+ - Functional dictionary class
+Bonus:
+ - Being able to destroy words
+ - Stats being displayed
+ - Functional high scores
