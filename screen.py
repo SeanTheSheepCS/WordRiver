@@ -20,10 +20,11 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 class Screen():
 
-    height = 60
-    width = 80
-
     def __init__(self):
+        self.height = 60
+        self.width = 80
+
+    def clear(self):
         pass
 
     def render_word(self,word):

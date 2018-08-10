@@ -20,11 +20,10 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 class Stats():
 
-    wpm = 0
-    p_error = 0
-    modifier = 1
-    score = 0
-    time = 0
 
     def __init__():
-        pass
+        self.wpm = 0
+        self.p_error = 0
+        self.modifier = 1
+        self.score = 0
+        self.time = 0
