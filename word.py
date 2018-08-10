@@ -22,11 +22,17 @@ class Word():
     #Note that pos_in_word is the index of the letter that should be typed, not the letter last typed
 
     def __init__(self,value,x,y):
+        self.x = x
+        self.y = y
         self.word = value
         self.pos_in_word = 0
         self.fully_typed = False
 
     def letter_typed(self,n):
+        '''
+        This method handles what is to happen when a letter, called n is typed.
+        n is intended to be a character. This function never returns a value.
+        '''
         #First we must check if the letter typed was the correct letter
         if(n==word[pos_in_word]):
             #The letter was correct, move on to the next one
@@ -40,6 +46,10 @@ class Word():
             fully_typed = true
 
     def portion_typed(self):
+        '''
+        This function returns a tuple, the first part is the portion of the word already typed (which should be highlighted in the GUI) and the rest
+        is the portion that has yet to be typed.
+        '''
         if((pos_in_word >= word.length()) or (pos_in_word < 0)):
             return "Error encountered"
 
