@@ -16,22 +16,51 @@ You should have received a copy of the GNU General Public License
 
 along with this program. If not, see http://www.gnu.org/licenses/.
 '''
+import dictionary
+import word
+import screen
+import stats
 
 class Manager():
-
+    wordDictionary = Dictionary.Dictionary(test)
+    scrn = screen.Screen()
+    stat = stats.Stats()
     words = []
-
-    def __init__(self):
-        pass
+    wordsOnScreen = 10
 
     def new_game(self):
-        pass
+        '''
+            starts a new game
+        '''
+        for i in range(wordsOnScreen):
+            w = wordDictionary.pick_word()
+            x = random.randint(scrn.width)
+            y = 0
+            self.words = word.Word(w,x,y)
+
+    def __init__(self):
+        self.wordDictionary.import_dictionary()
+        self.hp = 10
+        self.new_game()
 
     def restart(self):
-        pass
-
-    def game_loop(self):
-        pass
+        new_game()
 
     def process_input(self):
         pass
+
+    def game_loop(self):
+    
+        while self.hp > 0:
+            #render words
+            self.scrn.clear()
+            for word in self.words:
+                self.scrn.render_word(word)
+            self.scrn.render_stats(self.stat)            
+
+            self.process_input()
+            
+            #update data        
+
+        return self.stat
+    
