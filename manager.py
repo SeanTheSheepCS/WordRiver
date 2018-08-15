@@ -20,13 +20,9 @@ import dictionary
 import word
 import screen
 import stats
+import datetime
 
 class Manager():
-    wordDictionary = Dictionary.Dictionary(test)
-    scrn = screen.Screen()
-    stat = stats.Stats()
-    words = []
-    wordsOnScreen = 10
 
     def new_game(self):
         '''
@@ -34,13 +30,19 @@ class Manager():
         '''
         for i in range(wordsOnScreen):
             w = wordDictionary.pick_word()
-            x = random.randint(scrn.width)
-            y = 0
+            x = 0
+            y = random.randint(self.scrn.height-10)
             self.words = word.Word(w,x,y)
 
     def __init__(self):
         self.wordDictionary.import_dictionary()
         self.hp = 10
+        self.wordDictionary = Dictionary.Dictionary(test)
+        self.stat = stats.Stats()
+        self.scrn = screen.Screen(self.stat)
+        self.words = []
+        self.wordsOnScreen = 10
+        self.last_time = datetime.now()
         self.new_game()
 
     def restart(self):
@@ -49,18 +51,32 @@ class Manager():
     def process_input(self):
         pass
 
+    def add_words(self):
+        if len(self.words) < self.wordsOnScreen:
+            w = self.wordDictionary.pick_word()
+            y = random.randint(0,self.scrn.height-10)
+            w = word(w,0,y)
+        self.words.append(w)
+
     def game_loop(self):
-    
         while self.hp > 0:
             #render words
-            self.scrn.clear()
             for word in self.words:
                 self.scrn.render_word(word)
-            self.scrn.render_stats(self.stat)            
+            self.scrn.render_stats(self.stat)
 
+            #push the words along
+            new_time = datetime.now()
+            seconds_passed = (new_time-self.last_time).seconds
+            if(seconds_passed >= 1):
+                for word in self.words:
+                    word.x = word.x+(modifier*seconds_passed)
+                    word.y = word.y+(modifier*seconds_passed)
+
+            #take in input
             self.process_input()
-            
-            #update data        
+
+            #update data
+            self.add_words()
 
         return self.stat
-    
