@@ -25,10 +25,9 @@ class Word():
         self.x = x
         self.y = y
         self.word = value
-        self.pos_in_word = 0
         self.fully_typed = False
 
-    def letter_typed(self,n):
+    def letter_typed(self,n, pos_in_word):
         '''
         This method handles what is to happen when a letter, called n is typed.
         n is intended to be a character. This function never returns a value.
@@ -54,5 +53,3 @@ class Word():
             return "Error encountered"
 
         return (word[:pos_in_word],word[pos_in_word:])
-
-

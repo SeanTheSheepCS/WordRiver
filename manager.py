@@ -42,14 +42,33 @@ class Manager():
         self.scrn = screen.Screen(self.stat)
         self.words = []
         self.wordsOnScreen = 10
+        self.pos_in_word = 0
         self.last_time = datetime.now()
+        self.probableWords = []
         self.new_game()
 
     def restart(self):
         new_game()
 
     def process_input(self):
-        pass
+        key_pressed = scrn.getkey()
+
+        if pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
+            self.probableWords = []
+            for word in self.words:
+                if word[word.pos_in_word] == key_pressed:
+                    self.probableWords.append(word)
+        elif key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE:
+            for word in self.probableWords:
+                if word[self.pos_in_word] != key_pressed:
+                    del self.probableWords[self.pos_in_word]
+                elif word[self.pos_in_word] == key_pressed and self.pos_in_word == len(word):
+                    self.pos_in_word = -1
+                    self.stats.score += 1
+        elif key_pressed == curses.KEY_ENTER or key_pressed == curses.KEY_SPACE:
+            self.pos_in_word = -1
+
+        self.pos_in_word += 1
 
     def add_words(self):
         if len(self.words) < self.wordsOnScreen:
