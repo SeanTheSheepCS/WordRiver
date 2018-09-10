@@ -1,6 +1,6 @@
 '''
 WordRiver typing game.
-Copyright (C) 2018 Sean Vlad C.
+Copyright (C) 2018 Sean Kenny Vlad C.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,9 +18,16 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 '''
 
 import curses
+import screen
+import stats
 
 def main(stdscr):
-    pass
+    test()
+
+
+def test():
+    scr = screen.Screen(stats.Stats())
+    scr.draw_box(10,10)
 
 if __name__ == "__main__":
-    curses.wrapper(main())
+    curses.wrapper(main)

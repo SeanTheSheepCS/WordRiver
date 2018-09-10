@@ -28,14 +28,18 @@ class Screen():
         self.scr = curses.initscr()
         curses.cbreak()
         self.scr.keypad(True)
+        self.scr.addstr(0,0,'*')
+        self.scr.refresh()
+        while(True):
+            pass
         curses.noecho()
 
-    def draw_box(x,y):
+    def draw_box(self,x,y):
         '''
             draws a box from xy to the bottom of the screen
         '''
-        for i in range(height-y):
-            if i == 0 or i == height-y-1:
+        for i in range(self.height-y):
+            if i == 0 or i == self.height-y-1:
                 stars = ''.join(['*' for i in range(self.width)])
                 self.scr.addstr(i,0,stars)
             else:
@@ -48,7 +52,7 @@ class Screen():
 
     def render_word(self,word):
         scr.addstr(math.floor(word.x),math.floor(word.y),word.word)
-        
+
     def render_stats(self):
         self.draw_box(self.width,self.height-10)
 

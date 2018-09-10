@@ -21,7 +21,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 class Stats():
 
 
-    def __init__():
+    def __init__(self):
         self.wpm = 0
         self.p_error = 0
         self.modifier = 1

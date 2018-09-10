@@ -1,6 +1,6 @@
 '''
 WordRiver typing game.
-Copyright (C) 2018 Sean Vlad C.
+Copyright (C) 2018 Sean Kenny Vlad C.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ class Manager():
         for i in range(wordsOnScreen):
             w = wordDictionary.pick_word()
             x = 0
-            y = random.randint(self.scrn.height-10)
+            y = random.choice(poss_vals)
+            self.poss_vals.remove(y)
             self.words = word.Word(w,x,y)
 
     def __init__(self):
@@ -45,6 +46,7 @@ class Manager():
         self.pos_in_word = 0
         self.last_time = datetime.now()
         self.probableWords = []
+        self.poss_vals = range(0,self.scrn.height-10)
         self.new_game()
 
     def restart(self):
@@ -63,8 +65,12 @@ class Manager():
                 if word[self.pos_in_word] != key_pressed:
                     del self.probableWords[self.pos_in_word]
                 elif word[self.pos_in_word] == key_pressed and self.pos_in_word == len(word):
+                    #If last letter matches the end of the word
                     self.pos_in_word = -1
                     self.stats.score += 1
+                    self.poss_vals.append(word.y)
+                    self.wordsOnScreen = self.wordsOnScreen - 1
+                    self.words.remove(word)
         elif key_pressed == curses.KEY_ENTER or key_pressed == curses.KEY_SPACE:
             self.pos_in_word = -1
 
@@ -73,7 +79,8 @@ class Manager():
     def add_words(self):
         if len(self.words) < self.wordsOnScreen:
             w = self.wordDictionary.pick_word()
-            y = random.randint(0,self.scrn.height-10)
+            y = random.choice(poss_vals)
+            self.poss_vals.remove(y)
             w = word(w,0,y)
         self.words.append(w)
 
