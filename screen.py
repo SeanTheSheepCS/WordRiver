@@ -22,16 +22,13 @@ import curses
 class Screen():
 
     def __init__(self, stat):
-        self.height = 60
-        self.width = 80
         self.stats = stat
         self.scr = curses.initscr()
+        self.height,self.width = self.scr.getmaxyx()
         curses.cbreak()
         self.scr.keypad(True)
         self.scr.addstr(0,0,'*')
         self.scr.refresh()
-        while(True):
-            pass
         curses.noecho()
 
     def draw_box(self,x,y):

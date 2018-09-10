@@ -27,7 +27,10 @@ def main(stdscr):
 
 def test():
     scr = screen.Screen(stats.Stats())
-    scr.draw_box(10,10)
+    scr.draw_box(50,2)
+    scr.scr.refresh()
+    while(True):
+        pass
 
 if __name__ == "__main__":
     curses.wrapper(main)
