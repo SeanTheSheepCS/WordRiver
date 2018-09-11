@@ -17,20 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses/.
 '''
 
-import curses
-import screen
-import stats
+class Theme():
 
-def main(stdscr):
-    test()
-
-
-def test():
-    scr = screen.Screen(stats.Stats())
-    scr.title()
-    scr.scr.refresh()
-    while(True):
-        pass
-
-if __name__ == "__main__":
-    curses.wrapper(main)
+    def __init__(self,sideborder,roofborder,floorborder,cornerchar,text_colour,background_colour):
+        self.sideborder = sideborder
+        self.roofborder = roofborder
+        self.floorborder = floorborder
+        self.cornerchar = cornerchar
+        self.text_colour = text_colour
+        self.background_colour = background_colour

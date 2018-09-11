@@ -18,22 +18,43 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 '''
 
 import curses
+import theme
 
 class Screen():
 
     def __init__(self, stat):
+        self.chosen_theme = theme.Theme('|','-','-','*',curses.COLOR_BLACK,curses.COLOR_CYAN)
+        curses.init_pair(1,self.chosen_theme.text_colour,self.chosen_theme.background_colour)
         self.stats = stat
         self.scr = curses.initscr()
         self.height,self.width = self.scr.getmaxyx()
         curses.cbreak()
         self.scr.keypad(True)
-        self.scr.addstr(0,0,'*')
         self.scr.refresh()
         curses.noecho()
+
+    def title(self):
+        self.render_background()
+        self.draw_box(0,0,self.height-2,self.width-2)
+        if(self.height-4 > 25 and self.width-4 > 72):
+            river_title = open("title_display_default.txt",'r')
+            centre = (self.width-2)/2
+            '''
+            Code missing here, folks!
+            So what should happen is it should read the file and print the title at the centre
+            It should start printing at the index centre-30 and go until centre+30
+            Do this whenever you have time, stay positive!
+            -Sean
+            '''
 
     def draw_box(self,x,y):
         '''
             draws a box from xy to the bottom of the screen
+
+            Note:
+            I am unsure this function works as intended! I would doublecheck this.
+            I have made a function that takes in two points that I am fairly sure works as intended as an alternative to this one.
+            -Sean
         '''
         for i in range(self.height-y):
             if i == 0 or i == self.height-y-1:
@@ -42,6 +63,33 @@ class Screen():
             else:
                 self.scr.addstr(i,0,'*')
                 self.scr.addstr(i,self.width-1,'*')
+
+    def render_background(self):
+        for x in range(0,self.height-1):
+            for y in range(0,self.width-1):
+                self.scr.addstr(x,y,' ',curses.color_pair(1))
+
+    def draw_box(self,x1,y1,x2,y2):
+        '''
+            Draws a box with top left corner of (x1,y1) and with bottom right corner of (x2,y2)
+        '''
+        if(not(x1>self.height or x2>self.height or y1>self.width or y2>self.width or x1<0 or x2<0 or y1<0 or y2<0)):
+            for x in range(x1,x2):
+                self.scr.addstr(x,y1,self.chosen_theme.sideborder,curses.color_pair(1))
+                self.scr.addstr(x,y2,self.chosen_theme.sideborder,curses.color_pair(1))
+            for y in range(y1,y2):
+                self.scr.addstr(x1,y,self.chosen_theme.roofborder,curses.color_pair(1))
+                self.scr.addstr(x2,y,self.chosen_theme.floorborder,curses.color_pair(1))
+            self.scr.addstr(x1,y1,self.chosen_theme.cornerchar,curses.color_pair(1))
+            self.scr.addstr(x1,y2,self.chosen_theme.cornerchar,curses.color_pair(1))
+            self.scr.addstr(x2,y1,self.chosen_theme.cornerchar,curses.color_pair(1))
+            self.scr.addstr(x2,y2,self.chosen_theme.cornerchar,curses.color_pair(1))
+        else:
+            return "Nothing done."
+
+
+
+
 
     def clear(self):
         self.scr.clear()
