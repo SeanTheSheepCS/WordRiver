@@ -19,6 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 import curses
 import theme
+import math
 
 class Screen():
 
@@ -33,19 +34,25 @@ class Screen():
         self.scr.refresh()
         curses.noecho()
 
+    '''reads tag from txt file '''
+    def parsefile(self, fil):
+        tag = []
+        with open(fil, 'r') as f:
+            for line in f.readlines():
+                tag.append(line)
+        return tag
+
     def title(self):
         self.render_background()
         self.draw_box(0,0,self.height-2,self.width-2)
         if(self.height-4 > 25 and self.width-4 > 72):
-            river_title = open("title_display_default.txt",'r')
+            riverTitle = self.parsefile("title_display_default.txt")
             centre = (self.width-2)/2
-            '''
-            Code missing here, folks!
-            So what should happen is it should read the file and print the title at the centre
-            It should start printing at the index centre-30 and go until centre+30
-            Do this whenever you have time, stay positive!
-            -Sean
-            '''
+            leftOffset = math.floor(centre - 30)
+            yCoord = 3
+            for line in riverTitle:
+                self.scr.addstr(yCoord,leftOffset,line,curses.color_pair(1))
+                yCoord += 1
 
     def draw_box(self,x,y):
         '''
