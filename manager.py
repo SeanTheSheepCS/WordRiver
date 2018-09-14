@@ -21,6 +21,8 @@ import word
 import screen
 import stats
 import datetime
+import random
+import curses
 
 class Manager():
 
@@ -29,33 +31,47 @@ class Manager():
             starts a new game
             by choosing random words to be displayed on scr
         '''
-        for i in range(wordsOnScreen):
-            w = wordDictionary.pick_word()
+        for i in range(self.wordsOnScreen):
+            w = self.wordDictionary.pick_word()
             x = 0
-            y = random.choice(poss_vals)
+            y = random.choice(self.poss_vals)
             self.poss_vals.remove(y)
-            self.words = word.Word(w,x,y)
+            self.words.append(word.Word(w,x,y))
+
+        self.scrn.render_title()
+        self.game_loop()
 
     def __init__(self):
-        self.wordDictionary.import_dictionary()
+        self.should_keep_going = True
+        self.paused = False
         self.hp = 10
-        self.wordDictionary = Dictionary.Dictionary(test)
+        self.wordDictionary = dictionary.Dictionary("dictionary_testfile")
         self.stat = stats.Stats()
         self.scrn = screen.Screen(self.stat)
         self.words = []
         self.wordsOnScreen = 10
         self.pos_in_word = 0
-        self.last_time = datetime.now()
+        self.last_time = datetime.datetime.now()
         self.probableWords = []
-        self.poss_vals = range(0,self.scrn.height-10)
+        self.poss_vals = list(range(0,self.scrn.height-10))
         self.new_game()
 
     def restart(self):
         new_game()
 
-    def process_input(self):
-        key_pressed = scrn.getkey()
+    def pause(self, key_pressed):
+        #pause menu
+        if key_pressed == curses.KEY_ESCAPE:
+            self.scrn.render_pause()
+            self.paused = not self.paused
+        elif self.paused:
+            self.scrn.render_pause()
+            if key_pressed == curses.KEY_ESCAPE:
+                raise Exception("Goodye Cruel World")
+            elif key_pressed == curses.KEY_q:
+                self.paused = not self.paused
 
+    def game_mode(self, key_pressed):
         if pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
         #if first letter typed try to find a word
             self.probableWords = []
@@ -79,6 +95,12 @@ class Manager():
 
         self.pos_in_word += 1
 
+    def process_input(self):
+        key_pressed = self.scrn.scr.getkey()
+        self.pause(key_pressed)
+        if not self.paused:
+            self.game_mode(key_pressed)
+
     def add_words(self):
         '''
             add words to scr if not enough are there
@@ -95,10 +117,10 @@ class Manager():
             #render words
             for word in self.words:
                 self.scrn.render_word(word)
-            self.scrn.render_stats(self.stat)
+            self.scrn.render_stats()
 
             #push the words along
-            new_time = datetime.now()
+            new_time = datetime.datetime.now()
             seconds_passed = (new_time-self.last_time).seconds
             if(seconds_passed >= 1):
                 for word in self.words:
@@ -107,6 +129,8 @@ class Manager():
 
             #take in input
             self.process_input()
+            if (not should_keep_going):
+                break
 
             #update data
             self.add_words()

@@ -20,20 +20,22 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 import curses
 import screen
 import stats
+import manager
 
 def main(stdscr):
-    try:
-        test()
-    except:
-        pass 
+    #try:
+    test()
+    #except:
+    #    pass
 
 '''
     testing function allowing to draw and process only parts of the game
 '''
 def test():
-    scr = screen.Screen(stats.Stats())
-    scr.render_title()
-    scr.scr.refresh()
+    #scr = screen.Screen(stats.Stats())
+    #scr.render_title()
+    #scr.scr.refresh()
+    man = manager.Manager()
     while(True):
         pass
 

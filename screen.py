@@ -57,6 +57,13 @@ class Screen():
                 self.scr.addstr(yCoord,leftOffset,line[:-1],curses.color_pair(1))
                 yCoord += 1
 
+    def render_pause(self):
+        self.render_background()
+        self.draw_box(0,0,self.height-2,self.width-2)
+        self.scr.addstr((self.height-2)//2,((self.width-2)//2)-3,"PAUSED")
+        st = "Press ESC to unpause and q to quit"
+        self.scr.addstr((self.height-2)//2-1,((self.width-2)/2)-(len(st)//2),st)
+
     def draw_box(self,x,y):
         '''
             draws a box from xy to the bottom of the screen
@@ -102,10 +109,10 @@ class Screen():
         self.scr.refresh()
 
     def render_word(self,word):
-        scr.addstr(math.floor(word.x),math.floor(word.y),word.word)
+        self.scr.addstr(math.floor(word.x),math.floor(word.y),word.word)
 
     def render_stats(self):
-        self.draw_box(self.width,self.height-10)
+        self.draw_box(0,0,self.width,self.height-10)
 
     def uninit(self):
         self.scr.keypad(False)
