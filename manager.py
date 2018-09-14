@@ -27,6 +27,7 @@ class Manager():
     def new_game(self):
         '''
             starts a new game
+            by choosing random words to be displayed on scr
         '''
         for i in range(wordsOnScreen):
             w = wordDictionary.pick_word()
@@ -56,11 +57,13 @@ class Manager():
         key_pressed = scrn.getkey()
 
         if pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
+        #if first letter typed try to find a word
             self.probableWords = []
             for word in self.words:
                 if word[word.pos_in_word] == key_pressed:
                     self.probableWords.append(word)
         elif key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE:
+        #if not first letter
             for word in self.probableWords:
                 if word[self.pos_in_word] != key_pressed:
                     del self.probableWords[self.pos_in_word]
@@ -77,6 +80,9 @@ class Manager():
         self.pos_in_word += 1
 
     def add_words(self):
+        '''
+            add words to scr if not enough are there
+        '''
         if len(self.words) < self.wordsOnScreen:
             w = self.wordDictionary.pick_word()
             y = random.choice(poss_vals)

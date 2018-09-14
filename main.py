@@ -22,12 +22,17 @@ import screen
 import stats
 
 def main(stdscr):
-    test()
+    try:
+        test()
+    except:
+        pass 
 
-
+'''
+    testing function allowing to draw and process only parts of the game
+'''
 def test():
     scr = screen.Screen(stats.Stats())
-    scr.title()
+    scr.render_title()
     scr.scr.refresh()
     while(True):
         pass

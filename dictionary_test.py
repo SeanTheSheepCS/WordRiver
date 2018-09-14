@@ -19,6 +19,10 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 from dictionary import *
 
+'''
+    tests reading from testfile
+    and choosing words from it in random order
+'''
 def dict_test():
     d = Dictionary("dictionary_testfile")
     print(d.words)

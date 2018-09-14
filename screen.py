@@ -34,7 +34,7 @@ class Screen():
         self.scr.refresh()
         curses.noecho()
 
-    '''reads tag from txt file '''
+    '''reads multiline string from txt file '''
     def parsefile(self, fil):
         tag = []
         with open(fil, 'r') as f:
@@ -42,7 +42,10 @@ class Screen():
                 tag.append(line)
         return tag
 
-    def title(self):
+    '''
+        renders title
+    '''
+    def render_title(self):
         self.render_background()
         self.draw_box(0,0,self.height-2,self.width-2)
         if(self.height-4 > 25 and self.width-4 > 72):
@@ -51,7 +54,7 @@ class Screen():
             leftOffset = math.floor(centre - 30)
             yCoord = 3
             for line in riverTitle:
-                self.scr.addstr(yCoord,leftOffset,line,curses.color_pair(1))
+                self.scr.addstr(yCoord,leftOffset,line[:-1],curses.color_pair(1))
                 yCoord += 1
 
     def draw_box(self,x,y):
@@ -93,10 +96,6 @@ class Screen():
             self.scr.addstr(x2,y2,self.chosen_theme.cornerchar,curses.color_pair(1))
         else:
             return "Nothing done."
-
-
-
-
 
     def clear(self):
         self.scr.clear()
