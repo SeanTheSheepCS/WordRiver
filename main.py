@@ -25,7 +25,8 @@ import manager
 def main(stdscr):
     #try:
     test()
-    #except:
+    #except Exception as e:
+    #    print(e)
     #    pass
 
 '''

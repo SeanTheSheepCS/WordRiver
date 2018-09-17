@@ -63,6 +63,7 @@ class Screen():
         self.scr.addstr((self.height-2)//2,((self.width-2)//2)-3,"PAUSED")
         st = "Press ESC to unpause and q to quit"
         self.scr.addstr((self.height-2)//2-1,((self.width-2)/2)-(len(st)//2),st)
+        self.scr.refresh()
 
     def draw_box(self,x,y):
         '''
@@ -107,9 +108,10 @@ class Screen():
     def clear(self):
         self.scr.clear()
         self.scr.refresh()
+        
 
     def render_word(self,word):
-        self.scr.addstr(math.floor(word.x),math.floor(word.y),word.word)
+        self.scr.addstr(math.floor(word.y),math.floor(word.x),word.word,curses.color_pair(1))
 
     def render_stats(self):
         self.draw_box(0,0,self.width,self.height-10)

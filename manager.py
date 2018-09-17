@@ -61,42 +61,43 @@ class Manager():
 
     def pause(self, key_pressed):
         #pause menu
-        if key_pressed == curses.KEY_ESCAPE:
+        if key_pressed == curses.KEY_EXIT:
             self.scrn.render_pause()
             self.paused = not self.paused
         elif self.paused:
             self.scrn.render_pause()
-            if key_pressed == curses.KEY_ESCAPE:
-                raise Exception("Goodye Cruel World")
-            elif key_pressed == curses.KEY_q:
+            if key_pressed == curses.KEY_EXIT:
                 self.paused = not self.paused
+            elif key_pressed == curses.KEY_q:
+                raise Exception("Goodye Cruel World")
 
     def game_mode(self, key_pressed):
-        if pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
+        if self.pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
         #if first letter typed try to find a word
             self.probableWords = []
-            for word in self.words:
-                if word[word.pos_in_word] == key_pressed:
-                    self.probableWords.append(word)
+            for wor in self.words:
+                if wor.word[self.pos_in_word] == key_pressed:
+                    self.probableWords.append(wor)
         elif key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE:
         #if not first letter
-            for word in self.probableWords:
-                if word[self.pos_in_word] != key_pressed:
+            for wor in self.probableWords:
+                if wor.word[self.pos_in_word] != key_pressed:
                     del self.probableWords[self.pos_in_word]
-                elif word[self.pos_in_word] == key_pressed and self.pos_in_word == len(word):
+                elif wor.word[self.pos_in_word] == key_pressed and self.pos_in_word == len(word):
                     #If last letter matches the end of the word
                     self.pos_in_word = -1
                     self.stats.score += 1
                     self.poss_vals.append(word.y)
                     self.wordsOnScreen = self.wordsOnScreen - 1
-                    self.words.remove(word)
+                    self.words.remove(wor)
         elif key_pressed == curses.KEY_ENTER or key_pressed == curses.KEY_SPACE:
             self.pos_in_word = -1
 
         self.pos_in_word += 1
 
     def process_input(self):
-        key_pressed = self.scrn.scr.getkey()
+        key_pressed = self.scrn.scr.getch()
+        key_pressed = chr(key_pressed)
         self.pause(key_pressed)
         if not self.paused:
             self.game_mode(key_pressed)
@@ -110,26 +111,28 @@ class Manager():
             y = random.choice(poss_vals)
             self.poss_vals.remove(y)
             w = word(w,0,y)
-        self.words.append(w)
+            self.words.append(w)
 
     def game_loop(self):
         while self.hp > 0:
-            #render words
-            for word in self.words:
-                self.scrn.render_word(word)
-            self.scrn.render_stats()
 
             #push the words along
             new_time = datetime.datetime.now()
             seconds_passed = (new_time-self.last_time).seconds
+            #move the words if enough time has passed
             if(seconds_passed >= 1):
-                for word in self.words:
-                    word.x = word.x+(modifier*seconds_passed)
-                    word.y = word.y+(modifier*seconds_passed)
+                for wor in self.words:
+                    empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
+                    self.scrn.render_word(empty)
+                    wor.x = wor.x+(self.stat.modifier*seconds_passed)
+            #render words
+            for wor in self.words:
+                self.scrn.render_word(wor)
+            self.scrn.render_stats()
 
             #take in input
             self.process_input()
-            if (not should_keep_going):
+            if (not self.should_keep_going):
                 break
 
             #update data
