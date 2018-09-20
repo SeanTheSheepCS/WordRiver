@@ -37,8 +37,6 @@ def test():
     #scr.render_title()
     #scr.scr.refresh()
     man = manager.Manager()
-    while(True):
-        pass
 
 if __name__ == "__main__":
     curses.wrapper(main)

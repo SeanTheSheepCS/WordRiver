@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses/.
 '''
 import dictionary
+import threading
 import word
 import screen
 import stats
@@ -42,6 +43,7 @@ class Manager():
         self.game_loop()
 
     def __init__(self):
+        self.inputQueue = []
         self.should_keep_going = True
         self.paused = False
         self.hp = 10
@@ -54,6 +56,8 @@ class Manager():
         self.last_time = datetime.datetime.now()
         self.probableWords = []
         self.poss_vals = list(range(0,self.scrn.height-10))
+        t = threading.Thread(self.process_input())
+        t.start()
         self.new_game()
 
     def restart(self):
@@ -97,10 +101,9 @@ class Manager():
 
     def process_input(self):
         key_pressed = self.scrn.scr.getch()
-        key_pressed = chr(key_pressed)
-        self.pause(key_pressed)
-        if not self.paused:
-            self.game_mode(key_pressed)
+        self.scrn.scr.addstr(0,0,"GGJJGGJGJG")
+        if key_pressed:
+            self.inputQueue.append(key_pressed)
 
     def add_words(self):
         '''
@@ -131,7 +134,15 @@ class Manager():
             self.scrn.render_stats()
 
             #take in input
-            self.process_input()
+            #self.process_input() This is handled by the thread!
+            key_pressed = ''
+            if self.inputQueue:
+                key_pressed = self.inputQueue[0]
+                self.inputQueue.pop(0)
+
+            #call whatever uses keypressed
+            self.pause(key_pressed)
+            self.game_mode(key_pressed)
             if (not self.should_keep_going):
                 break
 
