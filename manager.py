@@ -50,14 +50,15 @@ class Manager():
         self.wordDictionary = dictionary.Dictionary("dictionary_testfile")
         self.stat = stats.Stats()
         self.scrn = screen.Screen(self.stat)
+        self.scrn.scr.nodelay(1)
         self.words = []
         self.wordsOnScreen = 10
         self.pos_in_word = 0
         self.last_time = datetime.datetime.now()
         self.probableWords = []
         self.poss_vals = list(range(0,self.scrn.height-10))
-        t = threading.Thread(self.process_input())
-        t.start()
+        #t = threading.Thread(self.process_input())
+        #t.start()
         self.new_game()
 
     def restart(self):
@@ -69,6 +70,7 @@ class Manager():
             self.scrn.render_pause()
             self.paused = not self.paused
         elif self.paused:
+            self.scrn.scr.addstr(0,0,"PAUSE")
             self.scrn.render_pause()
             if key_pressed == curses.KEY_EXIT:
                 self.paused = not self.paused
@@ -101,7 +103,8 @@ class Manager():
 
     def process_input(self):
         key_pressed = self.scrn.scr.getch()
-        self.scrn.scr.addstr(0,0,"GGJJGGJGJG")
+        with open('r.txt', 'a') as f:
+            f.write('%s\n'%(key_pressed))
         if key_pressed:
             self.inputQueue.append(key_pressed)
 
@@ -122,8 +125,9 @@ class Manager():
             #push the words along
             new_time = datetime.datetime.now()
             seconds_passed = (new_time-self.last_time).seconds
+            self.last_time = new_time
             #move the words if enough time has passed
-            if(seconds_passed >= 1):
+            if seconds_passed >= 1:
                 for wor in self.words:
                     empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
                     self.scrn.render_word(empty)
@@ -132,8 +136,11 @@ class Manager():
             for wor in self.words:
                 self.scrn.render_word(wor)
             self.scrn.render_stats()
+            self.scrn.scr.refresh()
 
             #take in input
+            self.process_input()
+
             #self.process_input() This is handled by the thread!
             key_pressed = ''
             if self.inputQueue:
