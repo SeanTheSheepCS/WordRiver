@@ -1,19 +1,15 @@
 '''
 WordRiver typing game.
 Copyright (C) 2018 Sean Kenny Vlad C.
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
-
 along with this program. If not, see http://www.gnu.org/licenses/.
 '''
 import dictionary
@@ -43,7 +39,7 @@ class Manager():
         self.game_loop()
 
     def __init__(self):
-        self.inputQueue = []
+        self.prevKey = ''
         self.should_keep_going = True
         self.paused = False
         self.hp = 10
@@ -103,10 +99,13 @@ class Manager():
 
     def process_input(self):
         key_pressed = self.scrn.scr.getch()
-        with open('r.txt', 'a') as f:
-            f.write('%s\n'%(key_pressed))
-        if key_pressed:
-            self.inputQueue.append(key_pressed)
+        with open('key.txt', 'a') as f:
+            if key_pressed != -1 and key_pressed != self.prevKey:
+                if key_pressed == 27:
+                    self.prevKey = 'ESC'
+                else:
+                    self.prevKey = chr(key_pressed)
+                f.write('%s\n'%(self.prevKey))
 
     def add_words(self):
         '''
@@ -135,7 +134,7 @@ class Manager():
             #render words
             for wor in self.words:
                 self.scrn.render_word(wor)
-            self.scrn.render_stats()
+            #self.scrn.render_stats()
             self.scrn.scr.refresh()
 
             #take in input
@@ -143,9 +142,6 @@ class Manager():
 
             #self.process_input() This is handled by the thread!
             key_pressed = ''
-            if self.inputQueue:
-                key_pressed = self.inputQueue[0]
-                self.inputQueue.pop(0)
 
             #call whatever uses keypressed
             self.pause(key_pressed)
