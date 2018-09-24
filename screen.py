@@ -111,10 +111,8 @@ class Screen():
 
 
     def render_word(self,word):
-        if (word.y < self.width and word.x < self.height):
+        if (word.y < self.height and word.x < self.width):
             self.scr.addstr(math.floor(word.y),math.floor(word.x),word.word,curses.color_pair(1))
-        with open('out.txt', 'a') as f:
-            f.write("%d %d %s\n"%(word.y, word.x, word.word))
 
     def render_stats(self):
         self.draw_box(0,0,self.width,self.height-10)

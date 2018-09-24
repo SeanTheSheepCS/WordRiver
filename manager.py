@@ -20,6 +20,7 @@ import stats
 import datetime
 import random
 import curses
+import debug
 
 class Manager():
 
@@ -62,16 +63,16 @@ class Manager():
 
     def pause(self, key_pressed):
         #pause menu
-        if key_pressed == curses.KEY_EXIT:
+        if key_pressed == 27:
             self.scrn.render_pause()
             self.paused = not self.paused
         elif self.paused:
             self.scrn.scr.addstr(0,0,"PAUSE")
             self.scrn.render_pause()
-            if key_pressed == curses.KEY_EXIT:
+            if key_pressed == 27:
                 self.paused = not self.paused
-            elif key_pressed == curses.KEY_q:
-                raise Exception("Goodye Cruel World")
+            elif key_pressed == ord('q'):
+                self.should_keep_going = False
 
     def game_mode(self, key_pressed):
         if self.pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
@@ -99,13 +100,9 @@ class Manager():
 
     def process_input(self):
         key_pressed = self.scrn.scr.getch()
-        with open('key.txt', 'a') as f:
-            if key_pressed != -1 and key_pressed != self.prevKey:
-                if key_pressed == 27:
-                    self.prevKey = 'ESC'
-                else:
-                    self.prevKey = chr(key_pressed)
-                f.write('%s\n'%(self.prevKey))
+        if key_pressed != -1 and key_pressed != self.prevKey:
+            self.prevKey = key_pressed #ESC = 27
+            debug.print(str(self.prevKey))
 
     def add_words(self):
         '''
@@ -123,14 +120,17 @@ class Manager():
 
             #push the words along
             new_time = datetime.datetime.now()
-            seconds_passed = (new_time-self.last_time).seconds
-            self.last_time = new_time
+            micro_seconds_passed = (new_time-self.last_time).microseconds
             #move the words if enough time has passed
-            if seconds_passed >= 1:
+
+            for wor in self.words:
+                empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
+                self.scrn.render_word(empty)
+
+            if micro_seconds_passed >= (0.1)*(1000000):
+                self.last_time = new_time
                 for wor in self.words:
-                    empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
-                    self.scrn.render_word(empty)
-                    wor.x = wor.x+(self.stat.modifier*seconds_passed)
+                    wor.x += self.stat.modifier
             #render words
             for wor in self.words:
                 self.scrn.render_word(wor)
@@ -140,7 +140,6 @@ class Manager():
             #take in input
             self.process_input()
 
-            #self.process_input() This is handled by the thread!
             key_pressed = ''
 
             #call whatever uses keypressed

@@ -1,13 +1,13 @@
 Week 0:
- + Decide on a project
- + Create an outline of what has to be done
- + Create a skeleton of the program
+ + Decide on a project WOO
+ + Create an outline of what has to be done NOT QUITE
+ + Create a skeleton of the program WOO
 
 Week 1:
- - Words moving across the screen
- - Working exit
- - Basic overlay
- - Functional dictionary class
+ - Words moving across the screen WOO
+ - Working exit CTRL^C
+ - Basic overlay WOO
+ - Functional dictionary class WOO
 Bonus:
  - Being able to destroy words
  - Stats being displayed
