@@ -64,8 +64,13 @@ class Manager():
     def pause(self, key_pressed):
         #pause menu
         if key_pressed == 27:
-            self.scrn.render_pause()
+            if self.paused:
+                self.scrn.unrender_pause()
+            else:                    
+                self.scrn.render_pause()
+
             self.paused = not self.paused
+            key_pressed = -1
         elif self.paused:
             self.scrn.scr.addstr(0,0,"PAUSE")
             self.scrn.render_pause()
@@ -103,6 +108,7 @@ class Manager():
         if key_pressed != -1 and key_pressed != self.prevKey:
             self.prevKey = key_pressed #ESC = 27
             debug.print(str(self.prevKey))
+        return key_pressed
 
     def add_words(self):
         '''
@@ -117,30 +123,29 @@ class Manager():
 
     def game_loop(self):
         while self.hp > 0:
+            if (not self.paused):
 
-            #push the words along
-            new_time = datetime.datetime.now()
-            micro_seconds_passed = (new_time-self.last_time).microseconds
-            #move the words if enough time has passed
+                #push the words along
+                new_time = datetime.datetime.now()
+                micro_seconds_passed = (new_time-self.last_time).microseconds
+                #move the words if enough time has passed
 
-            for wor in self.words:
-                empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
-                self.scrn.render_word(empty)
-
-            if micro_seconds_passed >= (0.1)*(1000000):
-                self.last_time = new_time
                 for wor in self.words:
-                    wor.x += self.stat.modifier
-            #render words
-            for wor in self.words:
-                self.scrn.render_word(wor)
-            #self.scrn.render_stats()
-            self.scrn.scr.refresh()
+                    empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
+                    self.scrn.render_word(empty)
+
+                if micro_seconds_passed >= (0.1)*(1000000):
+                    self.last_time = new_time
+                    for wor in self.words:
+                        wor.x += self.stat.modifier
+                #render words
+                for wor in self.words:
+                    self.scrn.render_word(wor)
+                #self.scrn.render_stats()
+                self.scrn.scr.refresh()
 
             #take in input
-            self.process_input()
-
-            key_pressed = ''
+            key_pressed = self.process_input()
 
             #call whatever uses keypressed
             self.pause(key_pressed)

@@ -58,12 +58,16 @@ class Screen():
                 yCoord += 1
 
     def render_pause(self):
-        self.render_background()
         self.draw_box(0,0,self.height-2,self.width-2)
-        self.scr.addstr((self.height-2)//2,((self.width-2)//2)-3,"PAUSED")
+        self.scr.addstr((self.height-2)//2,((self.width-2)//2)-3,"PAUSED",curses.color_pair(1))
         st = "Press ESC to unpause and q to quit"
-        self.scr.addstr((self.height-2)//2-1,((self.width-2)/2)-(len(st)//2),st)
-        self.scr.refresh()
+        self.scr.addstr((self.height-2)//2-1,((self.width-2)//2)-(len(st)//2),st,curses.color_pair(1))
+
+    def unrender_pause(self):
+        self.scr.addstr((self.height-2)//2,((self.width-2)//2)-3," "*6,curses.color_pair(1))
+        st = "Press ESC to unpause and q to quit"
+        st = " " * len(st)
+        self.scr.addstr((self.height-2)//2-1,((self.width-2)//2)-(len(st)//2),st,curses.color_pair(1))
 
     def draw_box(self,x,y):
         '''
