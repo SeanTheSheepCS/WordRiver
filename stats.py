@@ -27,3 +27,4 @@ class Stats():
         self.modifier = 1
         self.score = 0
         self.time = 0
+        self.missedWords =0

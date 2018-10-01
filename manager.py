@@ -31,7 +31,7 @@ class Manager():
         '''
         for i in range(self.wordsOnScreen):
             w = self.wordDictionary.pick_word()
-            x = 0
+            x = 1
             y = random.choice(self.poss_vals)
             self.poss_vals.remove(y)
             self.words.append(word.Word(w,x,y))
@@ -43,7 +43,7 @@ class Manager():
         self.prevKey = ''
         self.should_keep_going = True
         self.paused = False
-        self.hp = 10
+        self.hp = 30
         self.wordDictionary = dictionary.Dictionary("dictionary_testfile")
         self.stat = stats.Stats()
         self.scrn = screen.Screen(self.stat)
@@ -53,9 +53,7 @@ class Manager():
         self.pos_in_word = 0
         self.last_time = datetime.datetime.now()
         self.probableWords = []
-        self.poss_vals = list(range(0,self.scrn.height-10))
-        #t = threading.Thread(self.process_input())
-        #t.start()
+        self.poss_vals = list(range(1,self.scrn.height-10))
         self.new_game()
 
     def restart(self):
@@ -66,7 +64,7 @@ class Manager():
         if key_pressed == 27:
             if self.paused:
                 self.scrn.unrender_pause()
-            else:                    
+            else:
                 self.scrn.render_pause()
 
             self.paused = not self.paused
@@ -107,7 +105,6 @@ class Manager():
         key_pressed = self.scrn.scr.getch()
         if key_pressed != -1 and key_pressed != self.prevKey:
             self.prevKey = key_pressed #ESC = 27
-            debug.print(str(self.prevKey))
         return key_pressed
 
     def add_words(self):
@@ -116,10 +113,20 @@ class Manager():
         '''
         if len(self.words) < self.wordsOnScreen:
             w = self.wordDictionary.pick_word()
-            y = random.choice(poss_vals)
+            y = random.choice(self.poss_vals)
             self.poss_vals.remove(y)
-            w = word(w,0,y)
+            w = word.Word(w,1,y)
             self.words.append(w)
+
+    def remove_words_out_of_bounds(self):
+        for wor in self.words:
+            if wor.x+len(wor.word) > self.scrn.width - 3:
+                self.stat.missedWords += 1
+                self.hp -= 1
+                self.poss_vals.append(wor.y)
+                self.words.remove(wor)
+                empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
+                self.scrn.render_word(empty)
 
     def game_loop(self):
         while self.hp > 0:
@@ -154,6 +161,7 @@ class Manager():
                 break
 
             #update data
+            self.remove_words_out_of_bounds()
             self.add_words()
 
         return self.stat
