@@ -22,6 +22,7 @@ import random
 import curses
 import debug
 
+#:)
 class Manager():
 
     def new_game(self):
