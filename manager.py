@@ -22,7 +22,6 @@ import random
 import curses
 import debug
 
-#:)
 class Manager():
 
     def new_game(self):
@@ -55,6 +54,7 @@ class Manager():
         self.last_time = datetime.datetime.now()
         self.probableWords = []
         self.poss_vals = list(range(1,self.scrn.height-10))
+        debug.init()
         self.new_game()
 
     def restart(self):
@@ -62,6 +62,8 @@ class Manager():
 
     def pause(self, key_pressed):
         #pause menu
+        if(key_pressed!=-1):
+            debug.print(key_pressed)
         if key_pressed == 27:
             if self.paused:
                 self.scrn.unrender_pause()
@@ -79,28 +81,47 @@ class Manager():
                 self.should_keep_going = False
 
     def game_mode(self, key_pressed):
-        if self.pos_in_word == 0 and (key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE):
-        #if first letter typed try to find a word
+
+        # TEST
+        #debug.print(ord(curses.KEY_ENTER))
+        # END OF TEST
+
+        # 10 - enter 32 - space
+
+        if key_pressed == 10 or key_pressed == 32:
+            if(len(self.probableWords)==0):
+                self.pos_in_word = 0
+            elif ((self.pos_in_word == len(self.probableWords[0].word)) and len(self.probableWords)==1):
+                wor = self.probableWords[0]
+                #If last letter matches the end of the word
+                self.pos_in_word = 0
+                self.stat.score += 1
+                self.poss_vals.append(wor.y)
+                #self.wordsOnScreen = self.wordsOnScreen - 1
+                self.words.remove(wor)
+                #fill last known with blank
+                empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
+                self.scrn.render_word(empty)
+                #call add new word to the words on scr
+                self.add_words()
+
+        elif key_pressed!= -1 and self.pos_in_word == 0:
+            #if first letter typed try to find a word
             self.probableWords = []
             for wor in self.words:
-                if wor.word[self.pos_in_word] == key_pressed:
+                if len(wor.word)-1<self.pos_in_word:
+                    self.probableWords.remove(wor)
+                elif wor.word[self.pos_in_word] == chr(key_pressed):
                     self.probableWords.append(wor)
-        elif key_pressed != curses.KEY_ENTER or key_pressed != curses.KEY_SPACE:
-        #if not first letter
+                    self.pos_in_word += 1
+        elif key_pressed != -1:
+            #if not first letter
             for wor in self.probableWords:
-                if wor.word[self.pos_in_word] != key_pressed:
-                    del self.probableWords[self.pos_in_word]
-                elif wor.word[self.pos_in_word] == key_pressed and self.pos_in_word == len(word):
-                    #If last letter matches the end of the word
-                    self.pos_in_word = -1
-                    self.stats.score += 1
-                    self.poss_vals.append(word.y)
-                    self.wordsOnScreen = self.wordsOnScreen - 1
-                    self.words.remove(wor)
-        elif key_pressed == curses.KEY_ENTER or key_pressed == curses.KEY_SPACE:
-            self.pos_in_word = -1
-
-        self.pos_in_word += 1
+                if len(wor.word)-1<self.pos_in_word:
+                    self.probableWords.remove(wor)
+                elif wor.word[self.pos_in_word] != chr(key_pressed):
+                    self.probableWords.remove(wor)
+                self.pos_in_word += 1
 
     def process_input(self):
         key_pressed = self.scrn.scr.getch()

@@ -9,6 +9,13 @@ Week 1:
  - Basic overlay WOO
  - Functional dictionary class WOO
 Bonus:
- - Being able to destroy words
+ - Being able to destroy words WOO
  - Stats being displayed
  - Functional high scores
+
+Week 99:
+-Words speeding up
+-Display high scores
+-Colour changes
+-Working Stats
+-Show recently typed portion
