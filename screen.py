@@ -24,8 +24,9 @@ import math
 class Screen():
 
     def __init__(self, stat):
-        self.chosen_theme = theme.Theme('|','-','-','*',curses.COLOR_BLACK,curses.COLOR_CYAN)
+        self.chosen_theme = theme.Theme('|','-','-','*',curses.COLOR_BLACK,curses.COLOR_CYAN,curses.COLOR_WHITE)
         curses.init_pair(1,self.chosen_theme.text_colour,self.chosen_theme.background_colour)
+        curses.init_pair(2,self.chosen_theme.text_typedcolour,self.chosen_theme.background_colour)
         self.stats = stat
         self.scr = curses.initscr()
         self.height,self.width = self.scr.getmaxyx()
@@ -117,6 +118,11 @@ class Screen():
     def render_word(self,word):
         if (word.y < self.height and word.x < self.width):
             self.scr.addstr(math.floor(word.y),math.floor(word.x),word.word,curses.color_pair(1))
+
+    def render_word_typed(self,word,pos_in_word):
+        if (word.y < self.height and word.x < self.width):
+            self.scr.addstr(math.floor(word.y),math.floor(word.x),word.word[:pos_in_word],curses.color_pair(2))
+            self.scr.addstr(math.floor(word.y),math.floor(word.x)+pos_in_word,word.word[pos_in_word:],curses.color_pair(1))
 
     def render_stats(self):
         self.draw_box(0,0,self.width,self.height-10)

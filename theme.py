@@ -19,10 +19,11 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 class Theme():
 
-    def __init__(self,sideborder,roofborder,floorborder,cornerchar,text_colour,background_colour):
+    def __init__(self,sideborder,roofborder,floorborder,cornerchar,text_colour,background_colour,text_typedcolour):
         self.sideborder = sideborder
         self.roofborder = roofborder
         self.floorborder = floorborder
         self.cornerchar = cornerchar
         self.text_colour = text_colour
         self.background_colour = background_colour
+        self.text_typedcolour = text_typedcolour

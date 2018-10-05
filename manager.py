@@ -88,10 +88,31 @@ class Manager():
 
         # 10 - enter 32 - space
 
+        if len(self.probableWords) == 0:
+            self.pos_in_word = 0
+
         if key_pressed == 10 or key_pressed == 32:
-            if(len(self.probableWords)==0):
+
+            for wor in self.probableWords:
+                if self.pos_in_word == len(wor.word):
+                    self.pos_in_word = 0
+                    self.stat.score += 1
+                    self.poss_vals.append(wor.y)
+                    #self.wordsOnScreen = self.wordsOnScreen - 1
+                    self.words.remove(wor)
+                    #fill last known with blank
+                    empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
+                    self.scrn.render_word(empty)
+                    #call add new word to the words on scr
+                    self.add_words()
+                    #do not remove any more.
+                    break
                 self.pos_in_word = 0
-            elif ((self.pos_in_word == len(self.probableWords[0].word)) and len(self.probableWords)==1):
+
+
+            ### THIS IS BROKEN ###
+            '''
+            if ((self.pos_in_word == len(self.probableWords[0].word)) and len(self.probableWords)==1):
                 wor = self.probableWords[0]
                 #If last letter matches the end of the word
                 self.pos_in_word = 0
@@ -104,16 +125,20 @@ class Manager():
                 self.scrn.render_word(empty)
                 #call add new word to the words on scr
                 self.add_words()
-
+            '''
         elif key_pressed!= -1 and self.pos_in_word == 0:
             #if first letter typed try to find a word
             self.probableWords = []
+            got_here = False
             for wor in self.words:
                 if len(wor.word)-1<self.pos_in_word:
                     self.probableWords.remove(wor)
                 elif wor.word[self.pos_in_word] == chr(key_pressed):
                     self.probableWords.append(wor)
-                    self.pos_in_word += 1
+                    got_here = True
+            if(got_here):
+                self.pos_in_word += 1
+
         elif key_pressed != -1:
             #if not first letter
             for wor in self.probableWords:
@@ -121,7 +146,7 @@ class Manager():
                     self.probableWords.remove(wor)
                 elif wor.word[self.pos_in_word] != chr(key_pressed):
                     self.probableWords.remove(wor)
-                self.pos_in_word += 1
+            self.pos_in_word += 1
 
     def process_input(self):
         key_pressed = self.scrn.scr.getch()
@@ -147,6 +172,8 @@ class Manager():
                 self.hp -= 1
                 self.poss_vals.append(wor.y)
                 self.words.remove(wor)
+                if wor in self.probableWords:
+                    self.probableWords.remove(wor)
                 empty = word.Word(' ' * len(wor.word), wor.x, wor.y)
                 self.scrn.render_word(empty)
 
@@ -169,7 +196,10 @@ class Manager():
                         wor.x += self.stat.modifier
                 #render words
                 for wor in self.words:
-                    self.scrn.render_word(wor)
+                    if(wor in self.probableWords):
+                        self.scrn.render_word_typed(wor,self.pos_in_word)
+                    else:
+                        self.scrn.render_word(wor)
                 #self.scrn.render_stats()
                 self.scrn.scr.refresh()
 
